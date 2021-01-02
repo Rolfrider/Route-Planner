@@ -128,5 +128,6 @@ dependencies:
   - pip:
     - asgiref==3.3.1
     - django==3.1.4
+    - djangorestframework==3.12.2
     - sqlparse==0.4.1
 prefix: /Users/rolfrider/projects/spdb/backend/venv
