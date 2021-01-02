@@ -24,7 +24,7 @@ def find_nearest_index(place, places):
     dist = distance(place, places[nearest])
     for i in range(1, len(places)):
         new_dist = distance(place, places[i])
-        if new_dist <= distance:
+        if new_dist <= dist:
             nearest = i
             dist = new_dist
     return nearest
