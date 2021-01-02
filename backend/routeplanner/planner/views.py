@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from .serializers import NodeSerializer
 from rest_framework.parsers import JSONParser
-from .mapprovider.router import route_for
+from .domain.router import route_for
 # Create your views here.
 
 def index(request):
