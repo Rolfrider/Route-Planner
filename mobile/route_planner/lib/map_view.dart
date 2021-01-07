@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:route_planner/locator.dart';
 
 class MapView extends StatefulWidget {
   @override
@@ -9,6 +12,19 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   CameraPosition _initialLocation = CameraPosition(target: LatLng(52.2, 24.1));
   GoogleMapController mapController;
+  Locator _locator = Locator();
+  LatLng _currentPosition;
+  Set<Marker> markers = {};
+  PolylinePoints polylinePoints;
+  Map<PolylineId, Polyline> polylines = {};
+  List<LatLng> polylineCoordinates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -21,6 +37,7 @@ class _MapViewState extends State<MapView> {
         body: Stack(
           children: <Widget>[
             GoogleMap(
+              markers: markers != null ? Set<Marker>.from(markers) : null,
               initialCameraPosition: _initialLocation,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
@@ -37,16 +54,25 @@ class _MapViewState extends State<MapView> {
     );
   }
 
+  _getCurrentLocation() async {
+    await _locator.getCurrentPosition().then((position) {
+      setState(() {
+        _currentPosition = position;
+        _moveToPosition(position);
+        //TODO: Add position as starting address
+      });
+    });
+  }
+
   _moveToPosition(LatLng pos) {
     mapController.animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: LatLng(
-            // Will be fetching in the next step
             pos.latitude,
             pos.longitude,
           ),
-          zoom: 18.0,
+          zoom: 14.0,
         ),
       ),
     );
