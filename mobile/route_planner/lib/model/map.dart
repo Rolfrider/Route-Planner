@@ -11,13 +11,18 @@ class MapModel extends ChangeNotifier {
   LatLng _currentPosition;
   Set<LatLng> _points = {};
 
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
 
   Polyline _polyline;
   Set<Polyline> get polyline => _polyline != null ? {_polyline} : null;
 
-  getCurrentLocation() async {
+  getCurrentLocation() async => doWithLoading(_getCurrentLocation);
+
+  _getCurrentLocation() async {
     await _locator.getCurrentPosition().then((position) {
       _currentPosition = position;
     });
@@ -44,10 +49,21 @@ class MapModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  findRoute() async {
+  findRoute() async => doWithLoading(_findRoute);
+
+  _findRoute() async {
     final points = [_currentPosition] + _points.toList();
     final route =
         await routeFor(points.map((e) => Point.fromLatLong(e)).toList());
     _addLine(route.map((e) => e.toLatLong()).toList());
+  }
+
+  // ignore: non_constant_identifier_names
+  doWithLoading(Function) {
+    _isLoading = true;
+    notifyListeners();
+    Function();
+    _isLoading = false;
+    notifyListeners();
   }
 }

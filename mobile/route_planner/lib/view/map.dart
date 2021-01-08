@@ -77,6 +77,16 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
+            if (model.isLoading)
+              Container(
+                width: width,
+                height: height,
+                alignment: Alignment.center,
+                color: Colors.white60,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blueGrey),
+                ),
+              ),
           ],
         ),
       ),
