@@ -51,6 +51,30 @@ class _MapViewState extends State<MapView> {
               },
               onTap: model.addMarker,
             ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
+                  child: ClipOval(
+                    child: Material(
+                      // button color
+                      child: InkWell(
+                        splashColor: Colors.blue, // inkwell color
+                        child: SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: Icon(Icons.navigation),
+                        ),
+                        onTap: () {
+                          model.findRoute();
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
