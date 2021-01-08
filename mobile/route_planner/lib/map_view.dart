@@ -12,7 +12,12 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  CameraPosition _initialLocation = CameraPosition(target: LatLng(52.2, 24.1));
+  CameraPosition _initialLocation =
+      CameraPosition(target: LatLng(52.237049, 21.017532), zoom: 10);
+
+  final _bounds = CameraTargetBounds(LatLngBounds(
+      northeast: LatLng(52.368153, 21.271151),
+      southwest: LatLng(52.097851, 20.851688)));
 
   @override
   void initState() {
@@ -33,14 +38,14 @@ class _MapViewState extends State<MapView> {
           children: <Widget>[
             GoogleMap(
               markers: model.markers,
-              initialCameraPosition: _initialLocation,
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
               mapType: MapType.normal,
               zoomGesturesEnabled: true,
+              initialCameraPosition: _initialLocation,
+              cameraTargetBounds: _bounds,
               zoomControlsEnabled: false,
               onMapCreated: (GoogleMapController controller) {
-                model.mapController = controller;
                 model.getCurrentLocation();
               },
             ),

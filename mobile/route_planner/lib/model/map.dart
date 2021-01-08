@@ -6,7 +6,7 @@ import 'package:route_planner/locator.dart';
 
 class MapModel extends ChangeNotifier {
   Locator _locator = Locator();
-  GoogleMapController mapController;
+
   LatLng _currentPosition;
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
@@ -14,21 +14,6 @@ class MapModel extends ChangeNotifier {
   getCurrentLocation() async {
     await _locator.getCurrentPosition().then((position) {
       _currentPosition = position;
-      _moveToPosition(position);
     });
-  }
-
-  _moveToPosition(LatLng pos) {
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(
-            pos.latitude,
-            pos.longitude,
-          ),
-          zoom: 14.0,
-        ),
-      ),
-    );
   }
 }
