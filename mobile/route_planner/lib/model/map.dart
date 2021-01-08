@@ -37,7 +37,7 @@ class MapModel extends ChangeNotifier {
       markerId: MarkerId(point.toString()),
       position: point,
       infoWindow: InfoWindow(
-        title: 'Stop',
+        title: 'Stop', //TODO: Maybe add address or sth
       ),
     ));
     notifyListeners();
