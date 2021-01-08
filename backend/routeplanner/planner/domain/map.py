@@ -16,4 +16,4 @@ def get_stub_path():
     start_node = ox.get_nearest_node(warsaw_streets, (52.1634477, 21.0221398))
     end_node = ox.get_nearest_node(warsaw_streets, (52.1614477, 21.1211398))
     route = nx.shortest_path(warsaw_streets, start_node, end_node, weight='travel_time')
-    return [{"lat": warsaw_streets.nodes[node]['x'], "lng": warsaw_streets.nodes[node]['y']} for node in route]
+    return [{"lng": warsaw_streets.nodes[node]['x'], "lat": warsaw_streets.nodes[node]['y']} for node in route]
