@@ -48,6 +48,6 @@ class MapModel extends ChangeNotifier {
     final points = [_currentPosition] + _points.toList();
     final route =
         await routeFor(points.map((e) => Point.fromLatLong(e)).toList());
-    _addLine(route.map((e) => e.toLatLong()));
+    _addLine(route.map((e) => e.toLatLong()).toList());
   }
 }

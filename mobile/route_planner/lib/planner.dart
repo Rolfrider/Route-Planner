@@ -5,7 +5,7 @@ import 'model/point.dart';
 
 Future<List<Point>> routeFor(List<Point> points) async {
   final request =
-      http.Request('GET', Uri.parse("http://localhost:8000/planner/"));
+      http.Request('GET', Uri.parse("http://10.0.2.2:8000/planner/"));
   request.body = jsonEncode(points);
   return request
       .send()

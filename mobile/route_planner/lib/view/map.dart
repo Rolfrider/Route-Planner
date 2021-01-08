@@ -24,9 +24,11 @@ class _MapViewState extends State<MapView> {
     super.initState();
   }
 
+  MapModel model;
+
   @override
   Widget build(BuildContext context) {
-    var model = context.watch<MapModel>();
+    model = context.watch<MapModel>();
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
