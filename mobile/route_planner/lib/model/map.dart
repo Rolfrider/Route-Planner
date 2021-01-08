@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_planner/locator.dart';
 
@@ -9,8 +8,12 @@ class MapModel extends ChangeNotifier {
 
   LatLng _currentPosition;
   Set<LatLng> _points = {};
+
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
+
+  Polyline _polyline;
+  Set<Polyline> get polyline => _polyline != null ? {_polyline} : null;
 
   getCurrentLocation() async {
     await _locator.getCurrentPosition().then((position) {
@@ -18,8 +21,18 @@ class MapModel extends ChangeNotifier {
     });
   }
 
+  _addLine(List<LatLng> points) {
+    _polyline = Polyline(
+        polylineId: PolylineId("Route"),
+        color: Colors.red,
+        width: 3,
+        points: points);
+  }
+
   addMarker(LatLng point) {
     _points.add(point);
+    // TODO: Remove adding line later
+    _addLine(_points.toList());
     _markers.add(Marker(
       markerId: MarkerId(point.toString()),
       position: point,

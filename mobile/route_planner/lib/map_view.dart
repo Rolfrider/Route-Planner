@@ -45,6 +45,7 @@ class _MapViewState extends State<MapView> {
               initialCameraPosition: _initialLocation,
               cameraTargetBounds: _bounds,
               zoomControlsEnabled: false,
+              polylines: model.polyline,
               onMapCreated: (GoogleMapController controller) {
                 model.getCurrentLocation();
               },
