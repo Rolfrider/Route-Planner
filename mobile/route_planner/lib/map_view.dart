@@ -48,6 +48,7 @@ class _MapViewState extends State<MapView> {
               onMapCreated: (GoogleMapController controller) {
                 model.getCurrentLocation();
               },
+              onTap: model.addMarker,
             ),
           ],
         ),

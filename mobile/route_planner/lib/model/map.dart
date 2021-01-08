@@ -8,6 +8,7 @@ class MapModel extends ChangeNotifier {
   Locator _locator = Locator();
 
   LatLng _currentPosition;
+  Set<LatLng> _points = {};
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
 
@@ -15,5 +16,17 @@ class MapModel extends ChangeNotifier {
     await _locator.getCurrentPosition().then((position) {
       _currentPosition = position;
     });
+  }
+
+  addMarker(LatLng point) {
+    _points.add(point);
+    _markers.add(Marker(
+      markerId: MarkerId(point.toString()),
+      position: point,
+      infoWindow: InfoWindow(
+        title: 'Stop',
+      ),
+    ));
+    notifyListeners();
   }
 }
