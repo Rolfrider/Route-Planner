@@ -59,10 +59,10 @@ class MapModel extends ChangeNotifier {
   }
 
   // ignore: non_constant_identifier_names
-  doWithLoading(Function) {
+  doWithLoading(Function) async {
     _isLoading = true;
     notifyListeners();
-    Function();
+    await Function();
     _isLoading = false;
     notifyListeners();
   }
