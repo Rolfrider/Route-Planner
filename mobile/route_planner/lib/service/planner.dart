@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
+import 'package:route_planner/model/point.dart';
 import 'dart:convert';
-
-import 'model/point.dart';
 
 const _url = "http://10.0.2.2:8000/planner/";
 

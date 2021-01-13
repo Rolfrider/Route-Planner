@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:route_planner/locator.dart';
 import 'package:route_planner/model/point.dart';
-import 'package:route_planner/planner.dart';
+import 'package:route_planner/service/locator.dart';
+import 'package:route_planner/service/planner.dart';
 
 class MapModel extends ChangeNotifier {
   static final bounds = LatLngBounds(
