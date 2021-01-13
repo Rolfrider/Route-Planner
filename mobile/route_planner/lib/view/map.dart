@@ -15,9 +15,7 @@ class _MapViewState extends State<MapView> {
   CameraPosition _initialLocation =
       CameraPosition(target: LatLng(52.237049, 21.017532), zoom: 10);
 
-  final _bounds = CameraTargetBounds(LatLngBounds(
-      northeast: LatLng(52.368153, 21.271151),
-      southwest: LatLng(52.097851, 20.851688)));
+  final _bounds = CameraTargetBounds(MapModel.bounds);
 
   @override
   void initState() {

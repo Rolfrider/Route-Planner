@@ -6,6 +6,10 @@ import 'package:route_planner/model/point.dart';
 import 'package:route_planner/planner.dart';
 
 class MapModel extends ChangeNotifier {
+  static final bounds = LatLngBounds(
+      northeast: LatLng(52.368153, 21.271151),
+      southwest: LatLng(52.097851, 20.851688));
+
   Locator _locator = Locator();
 
   LatLng _currentPosition;
@@ -38,6 +42,9 @@ class MapModel extends ChangeNotifier {
   }
 
   addMarker(LatLng point) {
+    if (!bounds.contains(point)) {
+      return;
+    }
     _points.add(point);
     _markers.add(Marker(
       markerId: MarkerId(point.toString()),
