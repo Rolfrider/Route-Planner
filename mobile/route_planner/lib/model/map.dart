@@ -41,7 +41,9 @@ class MapModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  addMarker(LatLng point) {
+  addMarker(LatLng point) => doWithLoading(() => _addMarker(point));
+
+  _addMarker(LatLng point) async {
     if (!bounds.contains(point)) {
       return;
     }
@@ -50,10 +52,9 @@ class MapModel extends ChangeNotifier {
       markerId: MarkerId(point.toString()),
       position: point,
       infoWindow: InfoWindow(
-        title: 'Stop', //TODO: Maybe add address or sth
+        title: await _locator.getPlaceName(point),
       ),
     ));
-    notifyListeners();
   }
 
   findRoute() async => doWithLoading(_findRoute);

@@ -12,4 +12,17 @@ class Locator {
       print(e);
     });
   }
+
+  Future<String> getPlaceName(LatLng position) async {
+    return await _geloccator
+        .placemarkFromCoordinates(position.latitude, position.longitude)
+        .then((value) => _description(value.first))
+        .catchError((e) => print(e));
+  }
+
+  String _description(Placemark placemark) =>
+      [placemark.thoroughfare, placemark.name]
+          .toSet()
+          .where((element) => element != null && element.isNotEmpty)
+          .join(" ");
 }
