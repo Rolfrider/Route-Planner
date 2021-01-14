@@ -69,6 +69,14 @@ class _MapViewState extends State<MapView> {
                                 borderRadius: BorderRadius.circular(16)),
                           ),
                           RaisedButton(
+                              onPressed: model.polyline != null
+                                  ? () => model.clearMap()
+                                  : null,
+                              child: Text("Clear route"),
+                              color: Colors.blue[200],
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16))),
+                          RaisedButton(
                               onPressed: model.markers.isNotEmpty
                                   ? () => model.findRoute()
                                   : null,

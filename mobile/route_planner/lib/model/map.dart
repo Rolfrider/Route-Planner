@@ -75,6 +75,14 @@ class MapModel extends ChangeNotifier {
         }));
   }
 
+  clearMap() {
+    _markers = {};
+    _polyline = null;
+    selectedMarker = null;
+    _points = {};
+    notifyListeners();
+  }
+
   findRoute() async => doWithLoading(_findRoute);
 
   _findRoute() async {
