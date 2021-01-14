@@ -63,12 +63,16 @@ class MapModel extends ChangeNotifier {
     }
     _points.add(point);
     _markers.add(Marker(
-      markerId: MarkerId(point.toString()),
-      position: point,
-      infoWindow: InfoWindow(
-        title: await _locator.getPlaceName(point),
-      ),
-    ));
+        markerId: MarkerId(point.toString()),
+        position: point,
+        infoWindow: InfoWindow(
+          title: await _locator.getPlaceName(point),
+        ),
+        onTap: () {
+          selectedMarker = _markers.firstWhere(
+              (element) => element.markerId.value == point.toString());
+          notifyListeners();
+        }));
   }
 
   findRoute() async => doWithLoading(_findRoute);
