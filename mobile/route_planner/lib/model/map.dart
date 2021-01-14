@@ -21,6 +21,14 @@ class MapModel extends ChangeNotifier {
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
 
+  List<String> get places => _markers.map((e) => e.infoWindow.title).toList();
+  Marker selectedMarker;
+  int get selectedPlace => _markers.toList().indexOf(selectedMarker);
+  set selectedPlace(int index) {
+    selectedMarker = _markers.toList()[index];
+    notifyListeners();
+  }
+
   Polyline _polyline;
   Set<Polyline> get polyline => _polyline != null ? {_polyline} : null;
 
@@ -30,6 +38,12 @@ class MapModel extends ChangeNotifier {
     await _locator.getCurrentPosition().then((position) {
       _currentPosition = position;
     });
+  }
+
+  removePlace() {
+    _markers.remove(selectedMarker);
+    selectedMarker = null;
+    notifyListeners();
   }
 
   _addLine(List<LatLng> points) {
