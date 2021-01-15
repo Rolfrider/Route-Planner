@@ -25,7 +25,7 @@ class AStarNode:
 def find_path(node1, node2):
 
 
-    # skąd graf ? wszystkie sąsiednie nody muszę być w grafie, aby obliczać g w 97 linii
+    # skąd graf ? wszystkie sąsiednie nody muszę być w grafie, aby obliczać g w 79 linii
     graph= get_graph("Warszawa", 'drive')
 
     # graph = ox.add_edge_speeds(graph, fallback = 50)
@@ -98,7 +98,7 @@ def find_path(node1, node2):
             if (add_to_open(open, neighbor) == True):
                 open.append(( neighbor))
 
-
+,
 
     return []
 
