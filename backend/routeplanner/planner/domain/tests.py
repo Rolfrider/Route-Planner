@@ -1,4 +1,7 @@
 from django.test import TestCase
+
+#from .a_star import find_path
+from . import a_star
 from .router import find_nearest_index, sort_by_dist
 
 
@@ -42,3 +45,10 @@ class DistanceSortingTest(TestCase):
         Should throw IndexError
         """
         self.assertRaises(IndexError, sort_by_dist, [])
+
+class AStarTest(TestCase):
+
+
+    def test(self):
+        self.assertListEqual(a_star.find_path(( 20.9681918, 52.2433443), (21.0182482, 52.1450206)),
+[(21.022332	,52.163138), (21.022001	,52.162806), (21.020822,	52.161883), (21.020733	,52.161754), (21.021066,	52.161568)])

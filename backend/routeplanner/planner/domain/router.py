@@ -1,6 +1,6 @@
 from .map import get_graph, get_stub_path
 from math import cos, sin, sqrt, pi, atan2
-from .a_star import find_path
+from . import a_star
 
 def route_for(places):
     # sort places by distance
@@ -9,7 +9,7 @@ def route_for(places):
     nodes = []
     for p, next_p in zip(sorted_places[:-1], sorted_places[1:]):
         nodes.append(p)
-        nodes += find_path(p, next_p)
+        nodes += a_star.find_path(p, next_p)
     return get_stub_path() # TODO: return nodes when find_path implemented
 
 def sort_by_dist(places):
