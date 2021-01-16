@@ -1,116 +1,104 @@
+import heapq
 
 import osmnx as ox
 import networkx as nx
 
 from . import router
-from .map import get_graph
+from .map import get_graph, load_graph
 from .router import distance
 
 
 class AStarNode:
 
-    def __init__(self, node, parent: (), f, id):
-        self.node= node
-        self.parent = parent
-        self.g = 0  # Distance to start node
-        self.h = 0  # Distance to goal node
-        self.lc = 0  # Left turns cost
-        self.f = f # Total cost
-        self.id= id
+    def __init__(self, node, previous, cost, id):
+        self.node = node
+        self.id = id
+        self.previous = previous
+        self.start_dist = 0  # Distance to start node
+        self.end_dist = 0  # Distance to goal node
+        self.time = 0
+        self.left_cost = 0  # Left turns cost
+        self.cost = cost  # Total cost
 
-        # # Compare nodes
-        # def __eq__(self, other):
-        #     return self.node['osmid'] == other.node['osmid']
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+
+    def __lt__(self, other):
+        return self.id < other.id
+
+
+    def __le__(self, other):
+        return self.id <= other.id
+
+
+    def __gt__(self, other):
+        return self.id > other.id
 
 
 def find_path(node1, node2):
 
-    graph= get_graph("Warszawa", 'drive')
+    graph= load_graph()
 
-    # graph = ox.add_edge_speeds(graph, fallback = 50)
-    # graph = ox.add_edge_travel_times(graph)
+    start_id = ox.get_nearest_node(graph, node1)
+    start_node = graph.nodes[start_id]
 
-    start_id=ox.get_nearest_node(graph, (node1[0], node1[1]))
-    start_node=graph.nodes[start_id]
+    end_id = ox.get_nearest_node(graph, node2)
+    end_node = graph.nodes[end_id]
 
-    goal_id =ox.get_nearest_node(graph, (node2[0], node2[1]))
-    goal_node = graph.nodes[goal_id]
+    open = PriorityQueue()
+    closed = {}
 
+    start = AStarNode(start_node, None, 0, start_id)
+    end = AStarNode(end_node, None, 0, end_id)
+    open.put(start, 0)
+    result = []
+    while not open.empty():
 
+        #print('Open count: %d, Closed count: %d' % (len(open.elements), len(closed)))
+        current_node = open.get()
+        closed[current_node.id] = current_node
 
-
-    print("route")
-    route=nx.shortest_path(graph, start_id, goal_id, weight='travel_time')
-    for r in route:
-        print(graph.nodes[r])
-
-
-
-
-
-    open =[]
-    closed =[]
-
-    start= AStarNode(start_node,  None, 0, start_id)
-    end= AStarNode(goal_node,  None, 0, goal_id)
-    open.append( start)
-
-
-
-
-    while len(open)>0:
-
-        open.sort(key=lambda x: x.f, reverse=False)
-
-        current_node =open.pop(0)
-        closed.append(current_node)
-        print(current_node.id)
-        print(goal_id)
-
-
-        if(current_node.id== goal_id):
-            print("goaaaaaaaaaaaaaaaaal")
+        if (current_node.id == end.id):
             path = []
-            while (current_node.id != start_id):
-                    path.append((current_node.node['y'], current_node.node['x']))
-                    print(current_node.id)
-                    current_node = current_node.parent
-            return path[::-1]
+            while current_node.id != start.id:
+                # y to lat a y to lng
+                #print((current_node.node['y'], current_node.node['x']))
+                path.append((current_node.node['y'], current_node.node['x']))
+                current_node = current_node.previous
+            result = path[::-1]
+            return result
 
-        neighbors= find_neighbors(current_node, graph)
-        for next in neighbors:
+        neighbors = find_neighbors(current_node, graph)
+        for next_id in neighbors:
+            neighbor = AStarNode(graph.nodes[next_id], current_node, 0, next_id)
+            neighbor.time = current_node.time + graph.edges[(current_node.id, neighbor.id, 0)]['travel_time']
 
-            neighbor= AStarNode(graph.nodes[next], current_node, 0,next)
-            #neighbor.node musi być w grafie
-            neighbor.g = current_node.g + graph.edges[(current_node.id, neighbor.id, 0)]['travel_time']
-            neighbor.h =(distance((current_node.node['y'], current_node.node['x']), (end.node['y'], end.node['x'])))
+            if (current_node.previous is not None):
+                neighbor.left_cost = current_node.left_cost + check_turn(current_node, neighbor)
+            else:
+                neighbor.left_cost = current_node.left_cost + check_first_turn(current_node.node, neighbor.node)
 
-            # if(current_node.parent is not None):
-            #     neighbor.lc = current_node.lc + check_turn(current_node, neighbor)
-            # else:
-            #     neighbor.lc = current_node.lc + check_first_turn(current_node.node, neighbor.node)
+            neighbor.cost = neighbor.left_cost + neighbor.time
 
-            neighbor.f = neighbor.g + neighbor.h + neighbor.lc
-
-            is_in_closed = False
-            for c in closed:
-                if c.id == neighbor.id and c.f <= neighbor.f:
-                    is_in_closed = True
-                    break
-            if is_in_closed:
-                print("continue")
+            tmp = closed.get(neighbor.id)
+            if tmp is not None and tmp.cost <= neighbor.cost:
                 continue
 
-            if (add_to_open(open, neighbor) == True):
-                open.append(( neighbor))
+            if (should_consider(open, neighbor)):
+                dist = distance((current_node.node['y'], current_node.node['x']), (end.node['y'], end.node['x']))
+                open.put(neighbor, neighbor.cost + dist)
 
-    return []
+    result
+
+
 
 
 def find_neighbors(node, graph):
     neighbours= []
 
-    neighbours=([ v for u, v, k, d in graph.edges(keys=True, data=True) if u== node.id])
+    neighbours=([ v for u, v, k, d in graph.edges(keys=True, data=True) if u == node.id])
 
 
 
@@ -118,31 +106,43 @@ def find_neighbors(node, graph):
 
 def check_first_turn(node1, node2):
     if node1['x']>node2['x'] and node1['y'] <node2['y'] or node1['x'] <node2['x'] and node1['y'] >node2['y']:
-        return 0.1
+        return 60
     else:
         return 0
 
 
 def check_turn(node1, node2):
-    v1x = float(node1.node['x']) - float(node1.parent['x'])
-    v1y = float(node1.node['y']) - float(node1.parent['y'])
+    v1x = float(node1.node['x']) - float(node1.previous.node['x'])
+    v1y = float(node1.node['y']) - float(node1.previous.node['y'])
     v2x = float(node2.node['x']) - float(node1.node['x'])
     v2y = float(node2.node['y']) - float(node1.node['y'])
     if v1x * v2y - v1y * v2x > 0.0:
-        return 0.1
+        return 60
+    elif float(node1.previous.node['x'])== float(node2.node['x']) and float(node1.previous.node['y'])==float(node2.node['y']):
+        return 60
     else:
         return 0
 
 
-def add_to_open(open, node):
-    for n in open:
-        if (n.id == node.id and node.f >= n.f):
+def should_consider(open, node):
+    for n in open.elements:
+        if (n[1].id == node.id and node.cost >= n[1].cost):
             return False
     return True
 
 
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
 
+    def empty(self) -> bool:
+        return not self.elements
 
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+
+    def get(self):
+        return heapq.heappop(self.elements)[1]
 
 
 
