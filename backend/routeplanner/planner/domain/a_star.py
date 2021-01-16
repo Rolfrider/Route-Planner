@@ -1,12 +1,9 @@
-
-
 import osmnx as ox
 import networkx as nx
-
 from . import router
-
 from .map import get_graph, load_graph
-from . import priority_queue
+from .priority_queue import PriorityQueue
+
 from .router import distance
 
 
