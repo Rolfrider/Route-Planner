@@ -1,10 +1,12 @@
-import heapq
+
 
 import osmnx as ox
 import networkx as nx
 
 from . import router
+
 from .map import get_graph, load_graph
+from . import priority_queue
 from .router import distance
 
 
@@ -35,6 +37,8 @@ class AStarNode:
 
     def __gt__(self, other):
         return self.id > other.id
+
+
 
 
 def find_path(node1, node2):
@@ -90,7 +94,7 @@ def find_path(node1, node2):
                 dist = distance((current_node.node['y'], current_node.node['x']), (end.node['y'], end.node['x']))
                 open.put(neighbor, neighbor.cost + dist)
 
-    result
+    return result
 
 
 
@@ -131,18 +135,6 @@ def should_consider(open, node):
     return True
 
 
-class PriorityQueue:
-    def __init__(self):
-        self.elements = []
-
-    def empty(self) -> bool:
-        return not self.elements
-
-    def put(self, item, priority):
-        heapq.heappush(self.elements, (priority, item))
-
-    def get(self):
-        return heapq.heappop(self.elements)[1]
 
 
 
