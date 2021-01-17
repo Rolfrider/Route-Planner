@@ -79,7 +79,7 @@ def find_path(node1, node2):
             if (current_node.previous is not None):
                 neighbor.left_cost = current_node.left_cost + check_turn(current_node, neighbor)
             else:
-                neighbor.left_cost = current_node.left_cost + check_first_turn(current_node.node, neighbor.node)
+                neighbor.left_cost = 0
 
             neighbor.cost = neighbor.left_cost + neighbor.time
 
