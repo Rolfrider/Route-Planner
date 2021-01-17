@@ -17,42 +17,46 @@ def find_path(start_point: tuple[float, float], end_point: tuple[float, float], 
     start = AStarNode(start_node, None, 0, start_id)
     end = AStarNode(end_node, None, 0, end_id)
     open.put(start, 0)
-    result = []
     while not open.empty():
 
         current_node = open.get()
         closed[current_node.id] = current_node
 
         if (current_node.id == end.id):
-            path = []
-            while current_node.id != start.id:
-                path.append((current_node.node['y'], current_node.node['x']))
-                current_node = current_node.previous
-            result = path[::-1]
-            return result
+            return __get_route(current_node, start)
 
         neighbors = find_neighbors(current_node, graph.edges)
         for next_id in neighbors:
-            neighbor = AStarNode(graph.get_node(next_id), current_node, 0, next_id)
-            neighbor.time = current_node.time + graph.get_travel_time(current_node.id, neighbor.id)
+            neighbor = __get_neighbor(graph, current_node, next_id)
 
-            if (current_node.previous is not None):
-                neighbor.left_cost = current_node.left_cost + check_turn(current_node, neighbor)
-            else:
-                neighbor.left_cost = 0
-
-            neighbor.cost = neighbor.left_cost + neighbor.time
-
-            tmp = closed.get(neighbor.id)
-            if tmp is not None and tmp.cost <= neighbor.cost:
+            node_in_closed = closed.get(neighbor.id)
+            if node_in_closed is not None and node_in_closed.cost <= neighbor.cost:
                 continue
 
-            if (should_consider(open, neighbor)):
-                dist = distance((current_node.node['y'], current_node.node['x']), (end.node['y'], end.node['x']))
+            if should_consider(open, neighbor):
+                dist = distance((neighbor.node['y'], neighbor.node['x']), (end.node['y'], end.node['x']))
                 open.put(neighbor, neighbor.cost + dist)
+    # Return empty if can't find any 
+    return []
 
-    return result
+def __get_route(current_node: AStarNode, start: AStarNode):
+    path = []
+    while current_node.id != start.id:
+        path.append((current_node.node['y'], current_node.node['x']))
+        current_node = current_node.previous
+    return path[::-1]
 
+def __get_neighbor(graph, current_node, neighbor_id):
+    neighbor = AStarNode(graph.get_node(neighbor_id), current_node, 0, neighbor_id)
+    neighbor.time = current_node.time + graph.get_travel_time(current_node.id, neighbor.id)
+
+    if current_node.previous is not None:
+        neighbor.left_cost = current_node.left_cost + check_turn(current_node, neighbor)
+    else:
+        neighbor.left_cost = 0
+
+    neighbor.cost = neighbor.left_cost + neighbor.time
+    return neighbor
 
 left_turn_cost = 60
 
