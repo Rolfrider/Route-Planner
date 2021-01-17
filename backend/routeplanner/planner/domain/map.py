@@ -19,7 +19,7 @@ class WarsawGraph:
 
     def __init__(self):
         self.graph = load_graph()
-        self.edges = graph.edges(keys=True, data=True)
+        self.edges = self.graph.edges(keys=True, data=True)
 
     def get_travel_time(self, node1_id, node2_id):
         return self.graph.edges[(node1_id, node2_id, 0)]['travel_time']

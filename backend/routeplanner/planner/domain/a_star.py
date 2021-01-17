@@ -1,7 +1,7 @@
 from .map import WarsawGraph
 from .priority_queue import PriorityQueue
-from .router import distance
 from .a_star_node import AStarNode
+from math import cos, sin, sqrt, pi, atan2
 
 def find_path(start_point: tuple[float, float], end_point: tuple[float, float], graph: WarsawGraph):
 
@@ -57,6 +57,19 @@ def __get_neighbor(graph, current_node, neighbor_id):
 
     neighbor.cost = neighbor.left_cost + neighbor.time
     return neighbor
+
+def distance(p1, p2):
+    earth_radius = 6371*10**3 # in km
+    lat1 = to_radians(p1[0])
+    lat2 = to_radians(p2[0])
+    delta_lat = to_radians(p2[0] - p1[0])
+    delta_lan = to_radians(p2[1] - p1[1])
+    a = (sin(delta_lat / 2)**2) + cos(lat1) * cos(lat2) * (sin(delta_lan / 2)**2)
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    return earth_radius * c
+
+def to_radians(value):
+    return value * pi / 180
 
 left_turn_cost = 60
 
