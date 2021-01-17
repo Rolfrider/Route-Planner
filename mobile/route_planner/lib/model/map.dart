@@ -42,6 +42,7 @@ class MapModel extends ChangeNotifier {
 
   removePlace() {
     _markers.remove(selectedMarker);
+    _points.remove(selectedMarker.position);
     selectedMarker = null;
     notifyListeners();
   }
