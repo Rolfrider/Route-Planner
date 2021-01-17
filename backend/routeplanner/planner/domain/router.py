@@ -10,7 +10,7 @@ def route_for(places):
     for p, next_p in zip(sorted_places[:-1], sorted_places[1:]):
         nodes.append(p)
         nodes += find_path(p, next_p, graph)
-    return nodes
+    return list(map(lambda x: {"lat": x[0], "lng": x[1]}, nodes))
 
 def sort_by_dist(places):
     sorted_places = [places.pop(0)]
