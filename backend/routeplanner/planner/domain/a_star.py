@@ -1,40 +1,7 @@
-import osmnx as ox
-import networkx as nx
-from . import router
 from .map import WarsawGraph
 from .priority_queue import PriorityQueue
-
 from .router import distance
-
-
-class AStarNode:
-
-    def __init__(self, node, previous, cost, id):
-        self.node = node
-        self.id = id
-        self.previous = previous
-        self.time = 0
-        self.left_cost = 0  # Left turns cost
-        self.cost = cost  # Total cost
-
-
-    def __eq__(self, other):
-        return self.id == other.id
-
-
-    def __lt__(self, other):
-        return self.id < other.id
-
-
-    def __le__(self, other):
-        return self.id <= other.id
-
-
-    def __gt__(self, other):
-        return self.id > other.id
-
-
-
+from .a_star_node import AStarNode
 
 def find_path(start_point: tuple[float, float], end_point: tuple[float, float], graph: WarsawGraph):
 
