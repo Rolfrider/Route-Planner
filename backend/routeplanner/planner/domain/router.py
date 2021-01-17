@@ -1,4 +1,4 @@
-from .map import get_graph, get_stub_path
+from .map import WarsawGraph
 from math import cos, sin, sqrt, pi, atan2
 from . import a_star
 
@@ -7,10 +7,11 @@ def route_for(places):
     sorted_places = sort_by_dist(places)
     # find nodes between points
     nodes = []
+    graph = WarsawGraph()
     for p, next_p in zip(sorted_places[:-1], sorted_places[1:]):
         nodes.append(p)
-        nodes += a_star.find_path(p, next_p)
-    return get_stub_path() # TODO: return nodes when find_path implemented
+        nodes += a_star.find_path(p, next_p, graph)
+    return nodes
 
 def sort_by_dist(places):
     sorted_places = [places.pop(0)]

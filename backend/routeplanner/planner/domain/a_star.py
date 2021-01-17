@@ -1,7 +1,7 @@
 import osmnx as ox
 import networkx as nx
 from . import router
-from .map import get_graph, load_graph
+from .map import WarsawGraph
 from .priority_queue import PriorityQueue
 
 from .router import distance
@@ -36,15 +36,13 @@ class AStarNode:
 
 
 
-def find_path(node1, node2):
+def find_path(start_point: tuple[float, float], end_point: tuple[float, float], graph: WarsawGraph):
 
-    graph= load_graph()
+    start_id = graph.get_node_id(start_point)
+    start_node = graph.get_node(start_id)
 
-    start_id = ox.get_nearest_node(graph, node1)
-    start_node = graph.nodes[start_id]
-
-    end_id = ox.get_nearest_node(graph, node2)
-    end_node = graph.nodes[end_id]
+    end_id = graph.get_node_id(end_point)
+    end_node = graph.get_node(end_id)
 
     open = PriorityQueue()
     closed = {}
@@ -55,24 +53,21 @@ def find_path(node1, node2):
     result = []
     while not open.empty():
 
-        #print('Open count: %d, Closed count: %d' % (len(open.elements), len(closed)))
         current_node = open.get()
         closed[current_node.id] = current_node
 
         if (current_node.id == end.id):
             path = []
             while current_node.id != start.id:
-                # y to lat a y to lng
-                #print((current_node.node['y'], current_node.node['x']))
                 path.append((current_node.node['y'], current_node.node['x']))
                 current_node = current_node.previous
             result = path[::-1]
             return result
 
-        neighbors = find_neighbors(current_node, graph)
+        neighbors = find_neighbors(current_node, graph.edges)
         for next_id in neighbors:
-            neighbor = AStarNode(graph.nodes[next_id], current_node, 0, next_id)
-            neighbor.time = current_node.time + graph.edges[(current_node.id, neighbor.id, 0)]['travel_time']
+            neighbor = AStarNode(graph.get_node(next_id), current_node, 0, next_id)
+            neighbor.time = current_node.time + graph.get_travel_time(current_node.id, neighbor.id)
 
             if (current_node.previous is not None):
                 neighbor.left_cost = current_node.left_cost + check_turn(current_node, neighbor)
@@ -92,16 +87,10 @@ def find_path(node1, node2):
     return result
 
 
+left_turn_cost = 60
 
-
-def find_neighbors(node, graph):
-    neighbours= []
-
-    neighbours=([ v for u, v, k, d in graph.edges(keys=True, data=True) if u == node.id])
-
-
-
-    return neighbours
+def find_neighbors(node, edges):
+    return [ v for u, v, k, d in edges if u == node.id]
 
 def check_first_turn(node1, node2):
     if node1['x']>node2['x'] and node1['y'] <node2['y'] or node1['x'] <node2['x'] and node1['y'] >node2['y']:
@@ -116,9 +105,9 @@ def check_turn(node1, node2):
     v2x = float(node2.node['x']) - float(node1.node['x'])
     v2y = float(node2.node['y']) - float(node1.node['y'])
     if v1x * v2y - v1y * v2x > 0.0:
-        return 60
+        return left_turn_cost
     elif float(node1.previous.node['x'])== float(node2.node['x']) and float(node1.previous.node['y'])==float(node2.node['y']):
-        return 60
+        return left_turn_cost
     else:
         return 0
 
