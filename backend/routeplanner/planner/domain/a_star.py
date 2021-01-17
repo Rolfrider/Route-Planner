@@ -13,8 +13,6 @@ class AStarNode:
         self.node = node
         self.id = id
         self.previous = previous
-        self.start_dist = 0  # Distance to start node
-        self.end_dist = 0  # Distance to goal node
         self.time = 0
         self.left_cost = 0  # Left turns cost
         self.cost = cost  # Total cost
