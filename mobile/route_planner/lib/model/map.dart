@@ -21,7 +21,13 @@ class MapModel extends ChangeNotifier {
   Set<Marker> _markers = {};
   Set<Marker> get markers => _markers;
 
-  List<String> get places => _markers.map((e) => e.infoWindow.title).toList();
+  List<String> get places => _markers.map((e) {
+        if (e.infoWindow.title != null) {
+          return e.infoWindow.title;
+        } else {
+          return "Punkt bez nazwy";
+        }
+      }).toList();
   Marker selectedMarker;
   int get selectedPlace => _markers.toList().indexOf(selectedMarker);
   set selectedPlace(int index) {
